@@ -20,7 +20,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  livekit_pip_platform_interface: ^0.1.0
+  livekit_pip_platform_interface: ^0.2.0
   meta: ^1.7.0
 
 dev_dependencies:

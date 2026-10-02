@@ -26,7 +26,9 @@ public class LiveKitPipPlugin: NSObject, FlutterPlugin, LiveKitPipHostApi {
     }
 
     func initialize(request: PipInitRequest) {
-        platformView?.configure(autoEnterOnBackground: request.iosAutoEnterOnBackground)
+        platformView?.configure(
+            autoEnterOnBackground: request.enabled && request.iosAutoEnterOnBackground
+        )
         // Phase 2: wire request.iosIncludeLocalParticipantVideo for self-view inset
     }
 
@@ -43,6 +45,7 @@ public class LiveKitPipPlugin: NSObject, FlutterPlugin, LiveKitPipHostApi {
     }
 
     func dispose() {
+        platformView?.configure(autoEnterOnBackground: false)
         platformView?.stopPictureInPicture()
     }
 

@@ -18,7 +18,7 @@ The repo was scaffolded by Very Good CLI. Only a `getPlatformName()` stub exists
 
 ## Platform floors
 - Android: minSdk 26 (legacy enter path), full auto-enter on API 31+
-- iOS: deployment target 16.0 (arbitrary-sample-buffer PiP API needs iOS 15+) — **the current `Package.swift` sets 13.0 and must be raised**
+- iOS: deployment target 15.0 (the arbitrary-sample-buffer PiP API needs iOS 15+)
 
 ## Intended public Dart API
 
