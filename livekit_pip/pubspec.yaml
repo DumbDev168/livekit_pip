@@ -19,10 +19,11 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  livekit_client: ^2.13.0
-  livekit_pip_android: ^0.1.0
-  livekit_pip_ios: ^0.1.0
-  livekit_pip_platform_interface: ^0.1.0
+  # Floor stays at 2.11.0 so consumers pinned there can resolve.
+  livekit_client: ">=2.11.0 <3.0.0"
+  livekit_pip_android: ^0.2.0
+  livekit_pip_ios: ^0.2.0
+  livekit_pip_platform_interface: ^0.2.0
 
 dev_dependencies:
   flutter_test:

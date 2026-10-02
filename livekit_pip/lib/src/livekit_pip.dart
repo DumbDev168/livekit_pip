@@ -103,22 +103,7 @@ class LiveKitPip {
       },
     );
     _initialized = true;
-    // Push initial dominant track — participants may already be publishing
-    // video before initialize() is called, so we can't wait for the first
-    // ActiveSpeakersChangedEvent.
-    final initialTrackId = _speakerSelector?.currentBestTrackId;
-    if (initialTrackId != null) {
-      unawaited(LivekitPipPlatform.instance.updateActiveTrack(initialTrackId));
-    }
-    final initialDim = _speakerSelector?.currentBestDimensions;
-    if (initialDim != null) {
-      final r = clampPipAspectRatio(initialDim.width, initialDim.height);
-      if (r.width > 0 && r.height > 0) {
-        unawaited(
-          LivekitPipPlatform.instance.updateAspectRatio(r.width, r.height),
-        );
-      }
-    }
+    _speakerSelector?.selectBestFromRoom();
   }
 
   /// Requests the OS to enter PiP mode.

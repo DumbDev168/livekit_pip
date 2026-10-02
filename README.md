@@ -57,7 +57,7 @@ Planned (see [Status](#status)):
 
 | Feature | Android | iOS |
 |---|---|---|
-| Minimum version | API 26 (Android 8) | iOS 16 |
+| Minimum version | API 26 (Android 8) | iOS 15 |
 | Auto-enter on background | ✅ | ✅ |
 | Manual enter/exit | ✅ | ✅ |
 | Custom widget in PiP window | ✅ | — |
