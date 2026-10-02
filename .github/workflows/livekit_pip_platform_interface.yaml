@@ -20,7 +20,7 @@ jobs:
   build:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
     with:
-      flutter_version: 3.41.1
+      flutter_version: 3.44.9
       working_directory: livekit_pip_platform_interface
       test_optimization: false
       coverage_excludes: "**/*.g.dart"
