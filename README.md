@@ -52,7 +52,7 @@ Just hand the package a LiveKit `Room` and drop in one widget. Everything else i
 
 | Feature | Android | iOS |
 |---|---|---|
-| Minimum version | API 26 (Android 8) | iOS 15 |
+| Minimum version | API 26 (Android 8) | iOS 16 |
 | Auto-enter on background | ✅ | ✅ |
 | Manual enter/exit | ✅ | ✅ |
 | Custom widget in PiP window | ✅ | — |
@@ -184,19 +184,11 @@ In `Info.plist`, add `voip` (and/or `audio`) to `UIBackgroundModes`:
 
 #### Self-view on iOS
 
-With `includeLocalParticipantVideo: true` the plugin turns on `isMultitaskingCameraAccessEnabled` on flutter_webrtc's capture session, so the camera keeps running after the user leaves the app. iOS only allows it when ([Apple: Adopting Picture in Picture for video calls](https://developer.apple.com/documentation/avkit/adopting-picture-in-picture-for-video-calls)):
-
-- the device reports `isMultitaskingCameraAccessSupported` (iOS 16+), and
-- the app's deployment target is iOS 16 or later, **or** the app has the `com.apple.developer.avfoundation.multitasking-camera-access` entitlement (requested from Apple).
+With `includeLocalParticipantVideo: true` the plugin turns on `isMultitaskingCameraAccessEnabled` on flutter_webrtc's capture session, so the camera keeps running after the user leaves the app. The plugin requires iOS 16, and at that deployment target iOS grants this without the `multitasking-camera-access` entitlement ([Apple: Adopting Picture in Picture for video calls](https://developer.apple.com/documentation/avkit/adopting-picture-in-picture-for-video-calls)). The device must still report `isMultitaskingCameraAccessSupported`.
 
 Otherwise the user's tile shows their avatar during PiP, and the console prints `[livekit_pip] multitasking camera access not supported` once.
 
 A camera that keeps running also keeps streaming to the other participants while the user is in another app.
-
-```xml
-<key>com.apple.developer.avfoundation.multitasking-camera-access</key>
-<true/>
-```
 
 > **Prerequisite:** The LiveKit `Room` must remain connected while the app is in the background. Do not disconnect or suspend audio on lifecycle background events.
 

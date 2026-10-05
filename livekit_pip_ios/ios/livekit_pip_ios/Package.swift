@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "livekit_pip_ios",
     platforms: [
-        .iOS("15.0"),
+        .iOS("16.0"),
     ],
     products: [
         .library(name: "livekit-pip-ios", targets: ["livekit_pip_ios"])

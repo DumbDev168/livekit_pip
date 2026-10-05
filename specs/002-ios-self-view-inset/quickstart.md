@@ -18,11 +18,10 @@ await pip.initialize(
 
 ## Keep the user's camera live in PiP
 
-The plugin asks iOS to keep the camera running. iOS only agrees when:
-
-- the device reports multitasking camera support, and
-- the app's deployment target is iOS 16 or later, or the app has the
-  `com.apple.developer.avfoundation.multitasking-camera-access` entitlement.
+The plugin asks iOS to keep the camera running. The plugin requires iOS 16,
+and at that deployment target iOS agrees without the
+`multitasking-camera-access` entitlement, as long as the device reports
+multitasking camera support.
 
 Otherwise the user's tile shows their avatar during PiP. The Xcode console prints
 `[livekit_pip] multitasking camera access not supported` once in that case.

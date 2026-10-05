@@ -1,6 +1,19 @@
 <!--
 SYNC IMPACT REPORT
 ==================
+Version change: 1.0.1 → 1.0.2
+Type of bump: PATCH (platform floor restored)
+
+Modified sections:
+  Platform & Dependency Constraints: iOS deployment target 15.0 → 16.0.
+  At 16.0 iOS grants multitasking camera access without Apple's
+  multitasking-camera-access entitlement, so the live self-view in PiP
+  works for every consumer.
+
+Templates reviewed: no changes needed
+
+Previous report (1.0.1)
+-----------------------
 Version change: 1.0.0 → 1.0.1
 Type of bump: PATCH (platform floor corrected to match shipped code)
 
@@ -9,8 +22,6 @@ Modified sections:
   (podspec and Package.swift have declared 15.0 since commit acded41)
   Principle III: the 2-feed limit may be met with a second display layer
   when the video-call content source is used (spec 002)
-
-Templates reviewed: no changes needed
 
 Previous report (1.0.0)
 -----------------------
@@ -147,8 +158,10 @@ consumers to disable the feature entirely.
 ## Platform & Dependency Constraints
 
 - **Android minSdk**: 26 (legacy enter path); auto-enter API available on 31+.
-- **iOS deployment target**: 15.0. The podspec and `Package.swift` MUST both declare
-  iOS 15.0; every API used is iOS 15+ or gated with `#available`.
+- **iOS deployment target**: 16.0. The podspec and `Package.swift` MUST both declare
+  iOS 16.0; every API used is iOS 16+ or gated with `#available`. 16.0 is what
+  lets the live self-view in PiP use multitasking camera access without an
+  Apple entitlement.
 - **Dart dependency**: `livekit_client` (and its transitive `flutter_webrtc`) is the
   only allowed LiveKit-specific dependency. No direct `flutter_webrtc` import from
   the plugin's public API.
@@ -192,4 +205,4 @@ All PRs MUST include a "Constitution Check" confirming no principle is violated.
 If a violation is necessary (e.g., an unavoidable platform quirk), it MUST be
 documented in `plan.md`'s Complexity Tracking table.
 
-**Version**: 1.0.1 | **Ratified**: 2026-06-17 | **Last Amended**: 2026-10-05
+**Version**: 1.0.2 | **Ratified**: 2026-06-17 | **Last Amended**: 2026-10-05

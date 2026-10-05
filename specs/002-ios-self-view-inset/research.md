@@ -95,3 +95,6 @@ considered remotes with video, which is why a camera-off remote never updated.
 ## R8. iOS deployment target in the constitution
 
 **Decision**: PATCH amendment 1.0.0 → 1.0.1, iOS 16.0 → 15.0 (done in revision 1).
+
+**Superseded**: constitution 1.0.2 restores iOS 16.0, so every consumer gets
+multitasking camera access without the entitlement (see R4 caveats).
