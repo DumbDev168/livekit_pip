@@ -29,6 +29,7 @@ class LivekitPipIOS extends LivekitPipPlatform {
     required bool iosIncludeLocalParticipantVideo,
     required int videoWidth,
     required int videoHeight,
+    bool iosMirrorSelfView = true,
   }) => _api.initialize(
     PipInitRequest(
       enabled: enabled,
@@ -38,6 +39,7 @@ class LivekitPipIOS extends LivekitPipPlatform {
       iosIncludeLocalParticipantVideo: iosIncludeLocalParticipantVideo,
       videoWidth: videoWidth,
       videoHeight: videoHeight,
+      iosMirrorSelfView: iosMirrorSelfView,
     ),
   );
 
@@ -53,6 +55,20 @@ class LivekitPipIOS extends LivekitPipPlatform {
   @override
   Future<void> updateActiveTrack(String trackId) =>
       _api.updateActiveTrack(trackId);
+
+  @override
+  Future<void> updateParticipants(List<PipParticipantInfo> participants) =>
+      _api.updateParticipants([
+        for (final p in participants)
+          PipParticipant(
+            identity: p.identity,
+            isLocal: p.isLocal,
+            isMicMuted: p.isMicMuted,
+            displayName: p.displayName,
+            videoTrackId: p.videoTrackId,
+            avatarUrl: p.avatarUrl,
+          ),
+      ]);
 
   @override
   Stream<int> get stateStream =>

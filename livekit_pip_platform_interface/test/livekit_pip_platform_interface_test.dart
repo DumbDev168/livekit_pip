@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:livekit_pip_platform_interface/livekit_pip_platform_interface.dart';
 
 class _MockLivekitPipPlatform extends LivekitPipPlatform {
+  bool? lastMirrorSelfView;
+
   @override
   Future<bool> isSupported() async => true;
 
@@ -14,7 +16,10 @@ class _MockLivekitPipPlatform extends LivekitPipPlatform {
     required bool iosIncludeLocalParticipantVideo,
     required int videoWidth,
     required int videoHeight,
-  }) async {}
+    bool iosMirrorSelfView = true,
+  }) async {
+    lastMirrorSelfView = iosMirrorSelfView;
+  }
 
   @override
   Future<void> enterPip() async {}
@@ -53,6 +58,35 @@ void main() {
       LivekitPipPlatform.instance = livekitPipPlatform;
     });
 
+    group('initialize', () {
+      test(
+        'mirroring defaults to on',
+        () async {
+          final platform = livekitPipPlatform as _MockLivekitPipPlatform;
+          await platform.initialize(
+            enabled: true,
+            disableWhenScreenSharing: true,
+            androidAutoEnterOnBackground: true,
+            iosAutoEnterOnBackground: true,
+            iosIncludeLocalParticipantVideo: true,
+            videoWidth: 0,
+            videoHeight: 0,
+          );
+          expect(platform.lastMirrorSelfView, isTrue);
+        },
+      );
+    });
+
+    group('updateParticipants', () {
+      // Android draws the consumer widget, so the default must not throw.
+      test('is a no-op by default', () async {
+        await expectLater(
+          LivekitPipPlatform.instance.updateParticipants(const []),
+          completes,
+        );
+      });
+    });
+
     group('isSupported', () {
       test('returns true from mock', () async {
         expect(
@@ -60,6 +94,41 @@ void main() {
           isTrue,
         );
       });
+    });
+  });
+
+  group(PipParticipantInfo, () {
+    const info = PipParticipantInfo(
+      identity: 'clinician',
+      isLocal: false,
+      isMicMuted: true,
+      displayName: 'Dr. Example',
+      videoTrackId: 'track-1',
+      avatarUrl: 'https://example.com/a.png',
+    );
+
+    test('is equal by value, so unchanged tiles are not resent', () {
+      const same = PipParticipantInfo(
+        identity: 'clinician',
+        isLocal: false,
+        isMicMuted: true,
+        displayName: 'Dr. Example',
+        videoTrackId: 'track-1',
+        avatarUrl: 'https://example.com/a.png',
+      );
+      expect(info, same);
+      expect(info.hashCode, same.hashCode);
+    });
+
+    test('differs when the camera turns off', () {
+      const cameraOff = PipParticipantInfo(
+        identity: 'clinician',
+        isLocal: false,
+        isMicMuted: true,
+        displayName: 'Dr. Example',
+        avatarUrl: 'https://example.com/a.png',
+      );
+      expect(info, isNot(cameraOff));
     });
   });
 }

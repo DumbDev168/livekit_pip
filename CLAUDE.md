@@ -12,13 +12,13 @@ The repo was scaffolded by Very Good CLI. Only a `getPlatformName()` stub exists
 
 **Android**: PiP is an Activity-level mode — the whole Flutter surface shrinks and keeps rendering. Video tiles are already native WebRTC textures, so PiP content is just a Flutter widget the consumer provides. Minimal native work.
 
-**iOS**: There is no "shrink the app" mode. The PiP window renders exactly one `AVSampleBufferDisplayLayer` driven by an `AVPictureInPictureController`. WebRTC frames are not in that format; you must build a native frame pipeline: `RTCVideoFrame → CVPixelBuffer → CMSampleBuffer → display layer`. Overlay sublayers are not shown in the PiP window, so any multi-feed view must be composited into a single pixel buffer.
+**iOS**: There is no "shrink the app" mode, and Flutter cannot draw while the app is backgrounded (the engine disables the GPU), so iOS PiP content is always native. The plugin uses the video-call content source (`AVPictureInPictureVideoCallViewController`); its PiP window shows that view controller's view hierarchy. WebRTC frames go through a native pipeline: `RTCVideoFrame → CVPixelBuffer → CMSampleBuffer → AVSampleBufferDisplayLayer`.
 
-**Consequence**: iOS shows only the dominant/active speaker (plus an optional self-view inset composited in) — never an arbitrary grid. The full grid+self experience exists only on Android. Do not try to build a native N-tile grid compositor on iOS. This asymmetry is intentional.
+**Consequence**: iOS shows at most two native tiles side by side — the latest remote speaker and, optionally, the local camera — each showing video or the participant's avatar. Never an arbitrary grid, and never a consumer Flutter widget. The full grid+self experience exists only on Android. Do not try to build a native N-tile grid compositor on iOS. This asymmetry is intentional.
 
 ## Platform floors
 - Android: minSdk 26 (legacy enter path), full auto-enter on API 31+
-- iOS: deployment target 16.0 (arbitrary-sample-buffer PiP API needs iOS 15+) — **the current `Package.swift` sets 13.0 and must be raised**
+- iOS: deployment target 15.0 (the arbitrary-sample-buffer PiP API needs iOS 15+)
 
 ## Intended public Dart API
 
@@ -37,8 +37,10 @@ class AndroidPipConfiguration {
 }
 
 class IosPipConfiguration {
-  final bool includeLocalParticipantVideo;     // default true: composite self inset
+  final bool includeLocalParticipantVideo;     // default true: local tile + multitasking camera
   final bool autoEnterOnBackground;            // default true
+  final bool mirrorSelfView;                   // default true
+  final String? Function(Participant)? avatarUrlResolver; // shown while camera is off
 }
 
 enum PipState { unsupported, inactive, entering, active, exiting }
@@ -66,7 +68,8 @@ class LiveKitPipView extends StatelessWidget {
 ### Dart (shared, `livekit_pip/lib/src/`)
 - **`LiveKitPip`** — controller + `PipState` machine
 - **`LiveKitPipConfiguration`** / `AndroidPipConfiguration` / `IosPipConfiguration` — config objects
-- **`ActiveSpeakerSelector`** — subscribes to Room events (`activeSpeakers`, `trackPublished/Unpublished`, `participantDisconnected`, `disconnected`), computes the dominant remote video track, exposes its track id/sid to native
+- **`ActiveSpeakerSelector`** — subscribes to Room events (`activeSpeakers`, `trackPublished/Unpublished`, `participantDisconnected`, `disconnected`), computes the dominant remote video track, exposes its track id/sid to native (Android aspect ratio; screen-share state)
+- **`PipParticipantTracker`** — builds the iOS tile list (remote speaker + local): video track id or null, mic mute, display name, avatar URL; sends it via `updateParticipants`
 - **`LiveKitPipView`** — platform view widget
 - MethodChannel `livekit_pip` for commands; EventChannel for mode-change + state callbacks from native
 
@@ -80,8 +83,11 @@ class LiveKitPipView extends StatelessWidget {
 - **`LiveKitPipPlugin`** — registers channels + platform view factory
 - **`PipPlatformView`** (`FlutterPlatformView`) — `UIView` containing `AVSampleBufferDisplayLayer`; owns `AVPictureInPictureController` created with `ContentSource(sampleBufferDisplayLayer:playbackDelegate:)`
 - **`PlaybackDelegate`** (`AVPictureInPictureSampleBufferPlaybackDelegate`) — live stream (return infinite `CMTimeRange`, `isPlaybackPaused = false`)
-- **`FrameBridge`** — resolves the native `RTCVideoTrack` from a Dart track id via flutter_webrtc's native track registry; attaches `RTCVideoRenderer`; on each frame: `RTCVideoFrame → CVPixelBuffer → (optionally composite self inset via Core Image/Metal) → CMSampleBuffer → displayLayer.enqueue(...)`. On active-speaker change from Dart: rebind renderer to new track id. **Never recreate the display layer or PiP controller mid-call.**
-- **`PixelBufferCompositor`** — 2-feed compositor for self-view inset
+- **`FrameBridge`** — resolves the native `RTCVideoTrack` from a Dart track id via flutter_webrtc's native track registry; attaches `RTCVideoRenderer`; on each frame: `RTCVideoFrame → CVPixelBuffer → CMSampleBuffer → displayLayer.enqueue(...)`. On active-speaker change from Dart: rebind renderer to new track id. **Never recreate the display layer or PiP controller mid-call.**
+- **`PipTileView`** — one participant: `PipVideoRenderer`, or avatar/initials on a dark background while the camera is off or interrupted, plus a muted badge
+- **`PipTileLayout`** — pure ordering/sizing: a single landscape tile goes left, otherwise the local tile; widths follow video shapes; drives `preferredContentSize`
+- **`AvatarImageLoader`** — `URLSession` + `NSCache`; never logs URLs
+- Multitasking camera: when the local tile binds a track, `isMultitaskingCameraAccessEnabled` is set on flutter_webrtc's capture session (reached via `NativeTrackResolver`) if supported
 - **`NativeTrackResolver`** protocol — isolates the flutter_webrtc internals dependency to one file so a breaking change touches only one place
 
 ### Native communication
@@ -94,7 +100,7 @@ Uses [Pigeon](https://pub.dev/packages/pigeon). Source of truth: `pigeons/messag
 
 **Phase 1** — Skeleton + Android full + iOS dominant speaker (no inset): package scaffolding, Dart core + state machine, MethodChannel/EventChannel, Android PiP (auto-enter + manual + widget builder swap), iOS single-track `AVSampleBufferDisplayLayer` pipeline, example app.
 
-**Phase 2** — iOS self-view inset + active-speaker switching: 2-feed compositor, `ActiveSpeakerSelector` wired to native rebind, `includeLocalParticipantVideo` honored.
+**Phase 2** — iOS self-view inset + active-speaker switching: self-view inset view (spec 002), `ActiveSpeakerSelector` wired to native rebind, `includeLocalParticipantVideo` honored.
 
 **Phase 3** — Hardening + DX: `isSupported()` gating, screen-share suppression, permission/camera-off handling, call-end-in-PiP cleanup, full README, polished example.
 
@@ -112,7 +118,7 @@ android:supportsPictureInPicture="true"
 android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
 ```
 
-iOS `Info.plist`: `UIBackgroundModes` must include `voip` and/or `audio`. For self-video in PiP: multitasking camera access entitlement (automatic on iOS 18+ with `voip`; otherwise `com.apple.developer.avfoundation.multitasking-camera-access`).
+iOS `Info.plist`: `UIBackgroundModes` must include `voip` and/or `audio`. For live self-video in PiP, iOS must allow multitasking camera access: the device must report support, and apps with a deployment target below iOS 16 also need the `com.apple.developer.avfoundation.multitasking-camera-access` entitlement (Apple, "Adopting Picture in Picture for video calls").
 
 The LiveKit `Room` must stay connected in background — the host app must not disconnect on lifecycle background events. This is a hard prerequisite.
 
@@ -153,6 +159,6 @@ All packages use `very_good_analysis` — stricter than Flutter defaults. Always
 
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
-shell commands, and other important information, read the current plan at
-`specs/001-livekit-pip-plugin/plan.md`.
+shell commands, and other important information, read the current plan
+at specs/002-ios-self-view-inset/plan.md
 <!-- SPECKIT END -->

@@ -16,19 +16,42 @@ class AndroidPipConfiguration {
   final bool autoEnterOnBackground;
 }
 
+/// Returns the avatar image URL for [participant], or null to show their
+/// initials. Used in the iOS PiP window while their camera is off.
+typedef PipAvatarUrlResolver = String? Function(Participant participant);
+
 /// Configuration for the iOS PiP window.
+///
+/// iOS draws the PiP window natively: Flutter cannot render while the app is
+/// in the background, which is when PiP is on screen. So there is no widget
+/// builder here, unlike [AndroidPipConfiguration].
 class IosPipConfiguration {
   /// Creates iOS PiP configuration.
   const IosPipConfiguration({
     this.includeLocalParticipantVideo = true,
     this.autoEnterOnBackground = true,
+    this.mirrorSelfView = true,
+    this.avatarUrlResolver,
   });
 
-  /// If true, the local camera feed is composited as a self-view inset.
+  /// If true, the PiP window shows the user's own tile beside the other
+  /// person, and the plugin asks iOS to keep the camera running while the
+  /// app is in the background.
+  ///
+  /// iOS only allows that with multitasking camera access; otherwise the
+  /// user's tile shows their avatar. Keeping the camera running also keeps
+  /// the other side seeing the user while they are in another app.
   final bool includeLocalParticipantVideo;
 
   /// If true, PiP is entered automatically when the app is backgrounded.
   final bool autoEnterOnBackground;
+
+  /// If true, the user's own video is mirrored like a front-camera preview.
+  final bool mirrorSelfView;
+
+  /// Avatar for each participant, shown while their camera is off. Called
+  /// again when a participant's name, metadata, or attributes change.
+  final PipAvatarUrlResolver? avatarUrlResolver;
 }
 
 /// Master configuration for livekit_pip.
