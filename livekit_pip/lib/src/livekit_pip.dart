@@ -71,12 +71,8 @@ class LiveKitPip {
       },
       onAspectRatioChanged: (width, height) {
         if (!_initialized || _disposed) return;
-        final r = clampPipAspectRatio(width, height);
-        if (r.width > 0 && r.height > 0) {
-          unawaited(
-            LivekitPipPlatform.instance.updateAspectRatio(r.width, r.height),
-          );
-        }
+        if (!config.android.aspectRatioFollowsActiveSpeaker) return;
+        unawaited(_sendAspectRatio(width, height));
       },
     );
     _roomListener = room.createListener()
@@ -143,6 +139,23 @@ class LiveKitPip {
   Future<void> exitPiP() {
     _assertInitialized('exitPiP');
     return LivekitPipPlatform.instance.exitPip();
+  }
+
+  /// Sets the Android PiP window to [width]:[height], clamped to the range
+  /// Android accepts. Applies while PiP is open and to the next entry.
+  ///
+  /// No effect on iOS, which sizes its window from the tiles it draws.
+  ///
+  /// Throws [StateError] if not initialized or already disposed.
+  Future<void> updateAspectRatio(int width, int height) {
+    _assertInitialized('updateAspectRatio');
+    return _sendAspectRatio(width, height);
+  }
+
+  Future<void> _sendAspectRatio(int width, int height) {
+    final r = clampPipAspectRatio(width, height);
+    if (r.width <= 0 || r.height <= 0) return Future<void>.value();
+    return LivekitPipPlatform.instance.updateAspectRatio(r.width, r.height);
   }
 
   /// Releases all native resources and closes [stateStream].

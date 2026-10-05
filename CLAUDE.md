@@ -34,6 +34,7 @@ class AndroidPipConfiguration {
   // Consumer provides a widget rendered inside the PiP window (can be full grid+self)
   final Widget Function(BuildContext context, Room room) pipWidgetBuilder;
   final bool autoEnterOnBackground;            // default true
+  final bool aspectRatioFollowsActiveSpeaker;  // default true; false: size it with updateAspectRatio
 }
 
 class IosPipConfiguration {
@@ -50,6 +51,7 @@ class LiveKitPip {
   Future<void> initialize({required Room room, required LiveKitPipConfiguration config});
   Future<void> enterPiP();
   Future<void> exitPiP();
+  Future<void> updateAspectRatio(int width, int height); // Android window shape; no-op on iOS
   Stream<PipState> get stateStream;
   Future<void> dispose();
 }
