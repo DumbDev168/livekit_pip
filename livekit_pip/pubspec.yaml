@@ -26,6 +26,9 @@ dependencies:
   livekit_pip_platform_interface: ^0.2.0
 
 dev_dependencies:
+  # Tests only: lets fakes stand in for Track.mediaStreamTrack. The version is
+  # whatever livekit_client resolves.
+  flutter_webrtc: any
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.5
