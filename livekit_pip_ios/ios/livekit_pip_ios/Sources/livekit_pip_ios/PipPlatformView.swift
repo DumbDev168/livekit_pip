@@ -174,7 +174,7 @@ class PipPlatformView: NSObject, FlutterPlatformView {
     // the flag before the session starts; flutter_webrtc has already started
     // it, so it is set inside a configuration block instead.
     private func enableMultitaskingCamera() {
-        guard #available(iOS 16.0, *), let session = resolver.cameraCaptureSession() else { return }
+        guard let session = resolver.cameraCaptureSession() else { return }
         guard !session.isMultitaskingCameraAccessEnabled else { return }
         guard session.isMultitaskingCameraAccessSupported else {
             if !hasLoggedNoMultitaskingCamera {

@@ -18,7 +18,7 @@ The repo was scaffolded by Very Good CLI. Only a `getPlatformName()` stub exists
 
 ## Platform floors
 - Android: minSdk 26 (legacy enter path), full auto-enter on API 31+
-- iOS: deployment target 15.0 (the arbitrary-sample-buffer PiP API needs iOS 15+)
+- iOS: deployment target 16.0 (the sample-buffer PiP API needs 15+; 16 grants multitasking camera access, so the live self-view needs no entitlement)
 
 ## Intended public Dart API
 
@@ -120,7 +120,7 @@ android:supportsPictureInPicture="true"
 android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
 ```
 
-iOS `Info.plist`: `UIBackgroundModes` must include `voip` and/or `audio`. For live self-video in PiP, iOS must allow multitasking camera access: the device must report support, and apps with a deployment target below iOS 16 also need the `com.apple.developer.avfoundation.multitasking-camera-access` entitlement (Apple, "Adopting Picture in Picture for video calls").
+iOS `Info.plist`: `UIBackgroundModes` must include `voip` and/or `audio`. For live self-video in PiP, iOS must allow multitasking camera access. With the iOS 16 deployment target no entitlement is needed; the device must still report `isMultitaskingCameraAccessSupported` (Apple, "Adopting Picture in Picture for video calls").
 
 The LiveKit `Room` must stay connected in background — the host app must not disconnect on lifecycle background events. This is a hard prerequisite.
 

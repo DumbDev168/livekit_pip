@@ -26,7 +26,7 @@ local video never appeared in revision 1.
 
 **Testing**: `flutter test` + `mocktail`; iOS layout and PiP verified on device
 
-**Target Platform**: iOS 15+ (multitasking camera from iOS 16); Android unchanged
+**Target Platform**: iOS 16+ (restored from 15 in constitution 1.0.2); Android unchanged
 
 **Project Type**: Flutter federated plugin
 
@@ -46,7 +46,7 @@ file using flutter_webrtc internals; avatar URLs never logged
 | III. Platform Asymmetry | Max 2 feeds; no controller recreation; resolver isolation | ⚠️ Two display-layer tiles instead of `PixelBufferCompositor` (constitution 1.0.1 allows this) |
 | IV. Consumer UX | Released API unchanged; new option has a default | ✅ |
 | V. Frame Pipeline | No CPU compositing; pooled transforms reused | ✅ |
-| Platform Constraints | iOS 15.0 everywhere | ✅ (amended in revision 1) |
+| Platform Constraints | iOS 16.0 everywhere | ✅ (15.0 in revision 1, back to 16.0 in constitution 1.0.2) |
 
 ## Project Structure
 
