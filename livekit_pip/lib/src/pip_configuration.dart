@@ -7,6 +7,7 @@ class AndroidPipConfiguration {
   const AndroidPipConfiguration({
     required this.pipWidgetBuilder,
     this.autoEnterOnBackground = true,
+    this.aspectRatioFollowsActiveSpeaker = true,
   });
 
   /// Widget rendered inside the PiP window on Android.
@@ -14,6 +15,12 @@ class AndroidPipConfiguration {
 
   /// If true, PiP is entered automatically when the user presses home.
   final bool autoEnterOnBackground;
+
+  /// If true, the window takes the shape of the active remote speaker's
+  /// video. Set it to false when [pipWidgetBuilder] lays out something else,
+  /// such as two tiles side by side, and size the window with
+  /// `LiveKitPip.updateAspectRatio` instead.
+  final bool aspectRatioFollowsActiveSpeaker;
 }
 
 /// Returns the avatar image URL for [participant], or null to show their

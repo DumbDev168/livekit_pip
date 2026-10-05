@@ -180,6 +180,29 @@ void main() {
     });
   });
 
+  group('updateAspectRatio', () {
+    test('before initialize throws StateError', () {
+      final pip = LiveKitPip();
+      expect(() => pip.updateAspectRatio(16, 9), throwsStateError);
+    });
+
+    test('forwards the ratio clamped to Android range', () async {
+      final pip = LiveKitPip();
+      await pip.initialize(room: Room(), config: _config());
+      await pip.updateAspectRatio(1000, 100);
+      verify(() => platform.updateAspectRatio(239, 100)).called(1);
+      await pip.dispose();
+    });
+
+    test('ignores a non-positive size', () async {
+      final pip = LiveKitPip();
+      await pip.initialize(room: Room(), config: _config());
+      await pip.updateAspectRatio(0, 9);
+      verifyNever(() => platform.updateAspectRatio(any(), any()));
+      await pip.dispose();
+    });
+  });
+
   group('iOS tiles', () {
     List<PipParticipantInfo> lastSent() =>
         verify(

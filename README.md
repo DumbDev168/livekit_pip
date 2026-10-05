@@ -262,7 +262,24 @@ await pip.enterPiP();
 await pip.exitPiP();
 ```
 
-### 5. Clean up
+### 5. Shape the Android window yourself (optional)
+
+By default the Android PiP window takes the shape of the active remote
+speaker's video. If `pipWidgetBuilder` lays out something else, such as two
+tiles side by side, turn that off and set the shape yourself. Values are
+clamped to the range Android accepts; iOS ignores the call.
+
+```dart
+android: AndroidPipConfiguration(
+  pipWidgetBuilder: (context, room) => MySplitView(room: room),
+  aspectRatioFollowsActiveSpeaker: false,
+),
+
+// Whenever the layout changes, including before PiP opens:
+await pip.updateAspectRatio(18, 16);
+```
+
+### 6. Clean up
 
 ```dart
 @override

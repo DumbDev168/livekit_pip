@@ -1,8 +1,18 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:livekit_pip/livekit_pip.dart';
 
 void main() {
+  group('AndroidPipConfiguration', () {
+    test('window follows the active speaker by default', () {
+      final config = AndroidPipConfiguration(
+        pipWidgetBuilder: (_, _) => const SizedBox.shrink(),
+      );
+      expect(config.aspectRatioFollowsActiveSpeaker, isTrue);
+    });
+  });
+
   group('IosPipConfiguration', () {
     test('self-view defaults to on and mirrored, with no avatars', () {
       const config = IosPipConfiguration();
