@@ -5,6 +5,10 @@ public class LiveKitPipPlugin: NSObject, FlutterPlugin, LiveKitPipHostApi {
 
     private var stateEventSink: FlutterEventSink?
     private weak var platformView: PipPlatformView?
+    // Kept here because initialize() and the first updateParticipants() can
+    // land before Flutter creates the platform view.
+    private var mirrorSelfView = true
+    private var participants: [PipParticipant] = []
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let messenger = registrar.messenger()
@@ -29,7 +33,8 @@ public class LiveKitPipPlugin: NSObject, FlutterPlugin, LiveKitPipHostApi {
         platformView?.configure(
             autoEnterOnBackground: request.enabled && request.iosAutoEnterOnBackground
         )
-        // Phase 2: wire request.iosIncludeLocalParticipantVideo for self-view inset
+        mirrorSelfView = request.iosMirrorSelfView
+        platformView?.setMirrorSelfView(mirrorSelfView)
     }
 
     func enterPip() {
@@ -47,10 +52,17 @@ public class LiveKitPipPlugin: NSObject, FlutterPlugin, LiveKitPipHostApi {
     func dispose() {
         platformView?.configure(autoEnterOnBackground: false)
         platformView?.stopPictureInPicture()
+        participants = []
+        platformView?.updateParticipants([])
     }
 
-    func updateActiveTrack(trackId: String) {
-        platformView?.rebindTrack(trackId: trackId)
+    // The remote tile's video comes from updateParticipants on iOS; this stays
+    // in the shared contract for Android.
+    func updateActiveTrack(trackId: String) {}
+
+    func updateParticipants(participants: [PipParticipant]) {
+        self.participants = participants
+        platformView?.updateParticipants(participants)
     }
 
     // MARK: - Called by PipPlatformViewFactory
@@ -60,6 +72,8 @@ public class LiveKitPipPlugin: NSObject, FlutterPlugin, LiveKitPipHostApi {
         view.onStateChanged = { [weak self] ordinal in
             self?.stateEventSink?(ordinal)
         }
+        view.setMirrorSelfView(mirrorSelfView)
+        view.updateParticipants(participants)
     }
 }
 
