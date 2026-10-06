@@ -40,6 +40,7 @@ abstract class LivekitPipPlatform extends PlatformInterface {
     required int videoWidth,
     required int videoHeight,
     bool iosMirrorSelfView = true,
+    bool iosAnimateExit = true,
   });
 
   /// Requests the OS to enter PiP mode.

@@ -228,6 +228,8 @@ await pip.initialize(
     ios: IosPipConfiguration(
       includeLocalParticipantVideo: true,
       mirrorSelfView: true, // default
+      // false hides the tiles while the PiP window closes.
+      animateExit: true, // default
       // Shown while a participant's camera is off; null shows initials.
       avatarUrlResolver: (participant) => avatarFor(participant.identity),
     ),

@@ -38,6 +38,7 @@ class IosPipConfiguration {
     this.includeLocalParticipantVideo = true,
     this.autoEnterOnBackground = true,
     this.mirrorSelfView = true,
+    this.animateExit = true,
     this.avatarUrlResolver,
   });
 
@@ -55,6 +56,10 @@ class IosPipConfiguration {
 
   /// If true, the user's own video is mirrored like a front-camera preview.
   final bool mirrorSelfView;
+
+  /// If true, the tiles stay visible while iOS grows the closing PiP window
+  /// back over the call. If false, they are hidden so the call shows through.
+  final bool animateExit;
 
   /// Avatar for each participant, shown while their camera is off. Called
   /// again when a participant's name, metadata, or attributes change.

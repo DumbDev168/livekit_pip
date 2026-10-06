@@ -108,6 +108,7 @@ class PipInitRequest {
     this.videoWidth = 0,
     this.videoHeight = 0,
     this.iosMirrorSelfView = true,
+    this.iosAnimateExit = true,
   });
 
   bool enabled;
@@ -126,6 +127,8 @@ class PipInitRequest {
 
   bool iosMirrorSelfView;
 
+  bool iosAnimateExit;
+
   List<Object?> _toList() {
     return <Object?>[
       enabled,
@@ -136,6 +139,7 @@ class PipInitRequest {
       videoWidth,
       videoHeight,
       iosMirrorSelfView,
+      iosAnimateExit,
     ];
   }
 
@@ -154,6 +158,7 @@ class PipInitRequest {
       videoWidth: result[5]! as int,
       videoHeight: result[6]! as int,
       iosMirrorSelfView: result[7]! as bool,
+      iosAnimateExit: result[8]! as bool,
     );
   }
 
@@ -179,7 +184,8 @@ class PipInitRequest {
         ) &&
         _deepEquals(videoWidth, other.videoWidth) &&
         _deepEquals(videoHeight, other.videoHeight) &&
-        _deepEquals(iosMirrorSelfView, other.iosMirrorSelfView);
+        _deepEquals(iosMirrorSelfView, other.iosMirrorSelfView) &&
+        _deepEquals(iosAnimateExit, other.iosAnimateExit);
   }
 
   @override
@@ -188,7 +194,7 @@ class PipInitRequest {
 
   @override
   String toString() {
-    return 'PipInitRequest(enabled: $enabled, disableWhenScreenSharing: $disableWhenScreenSharing, androidAutoEnterOnBackground: $androidAutoEnterOnBackground, iosAutoEnterOnBackground: $iosAutoEnterOnBackground, iosIncludeLocalParticipantVideo: $iosIncludeLocalParticipantVideo, videoWidth: $videoWidth, videoHeight: $videoHeight, iosMirrorSelfView: $iosMirrorSelfView)';
+    return 'PipInitRequest(enabled: $enabled, disableWhenScreenSharing: $disableWhenScreenSharing, androidAutoEnterOnBackground: $androidAutoEnterOnBackground, iosAutoEnterOnBackground: $iosAutoEnterOnBackground, iosIncludeLocalParticipantVideo: $iosIncludeLocalParticipantVideo, videoWidth: $videoWidth, videoHeight: $videoHeight, iosMirrorSelfView: $iosMirrorSelfView, iosAnimateExit: $iosAnimateExit)';
   }
 }
 

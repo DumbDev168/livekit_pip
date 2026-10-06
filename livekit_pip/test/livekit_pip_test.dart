@@ -42,6 +42,7 @@ void main() {
         videoWidth: any(named: 'videoWidth'),
         videoHeight: any(named: 'videoHeight'),
         iosMirrorSelfView: any(named: 'iosMirrorSelfView'),
+        iosAnimateExit: any(named: 'iosAnimateExit'),
       ),
     ).thenAnswer((_) async {});
     when(() => platform.stateStream).thenAnswer((_) => stateRaw.stream);
@@ -230,6 +231,33 @@ void main() {
           videoWidth: any(named: 'videoWidth'),
           videoHeight: any(named: 'videoHeight'),
           iosMirrorSelfView: false,
+          iosAnimateExit: any(named: 'iosAnimateExit'),
+        ),
+      ).called(1);
+      await pip.dispose();
+    });
+
+    test('sends the exit animation setting to the platform', () async {
+      final pip = LiveKitPip();
+      await pip.initialize(
+        room: Room(),
+        config: _config(ios: const IosPipConfiguration(animateExit: false)),
+      );
+      verify(
+        () => platform.initialize(
+          enabled: any(named: 'enabled'),
+          disableWhenScreenSharing: any(named: 'disableWhenScreenSharing'),
+          androidAutoEnterOnBackground: any(
+            named: 'androidAutoEnterOnBackground',
+          ),
+          iosAutoEnterOnBackground: any(named: 'iosAutoEnterOnBackground'),
+          iosIncludeLocalParticipantVideo: any(
+            named: 'iosIncludeLocalParticipantVideo',
+          ),
+          videoWidth: any(named: 'videoWidth'),
+          videoHeight: any(named: 'videoHeight'),
+          iosMirrorSelfView: any(named: 'iosMirrorSelfView'),
+          iosAnimateExit: false,
         ),
       ).called(1);
       await pip.dispose();

@@ -14,10 +14,11 @@ void main() {
   });
 
   group('IosPipConfiguration', () {
-    test('self-view defaults to on and mirrored, with no avatars', () {
+    test('self-view on and mirrored, exit animated, with no avatars', () {
       const config = IosPipConfiguration();
       expect(config.includeLocalParticipantVideo, isTrue);
       expect(config.mirrorSelfView, isTrue);
+      expect(config.animateExit, isTrue);
       expect(config.avatarUrlResolver, isNull);
     });
 
