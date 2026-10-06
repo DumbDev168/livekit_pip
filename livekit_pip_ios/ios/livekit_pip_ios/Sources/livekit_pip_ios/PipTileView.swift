@@ -44,6 +44,9 @@ final class PipTileView: UIView {
     private let micBadge = UIView()
     private var videoSize: CGSize?
     private var loadingAvatarURL: URL?
+    /// The renderer only gets frames inside the PiP window, so without this
+    /// the first PiP opens before any tile knows its shape.
+    private var sizeProbe: PipFrameSizeProbe?
 
     private var showsVideo: Bool { track != nil && !isCameraInterrupted }
 
@@ -69,15 +72,16 @@ final class PipTileView: UIView {
         micBadge.addSubview(micIcon)
 
         [renderer, initialsLabel, avatarView, micBadge].forEach(addSubview)
-        sizeObserver.onChange = { [weak self] size in
-            self?.videoSize = size
-            self?.onAspectChanged?()
-        }
+        sizeObserver.onChange = { [weak self] size in self?.updateVideoSize(size) }
         updateContent()
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    deinit {
+        sizeProbe?.stop()
+    }
 
     /// Shows `participant`, or clears the tile with `nil`. The track is only
     /// resolved again when its id changes.
@@ -93,6 +97,11 @@ final class PipTileView: UIView {
             loadAvatar(participant?.avatarUrl)
         }
         updateContent()
+    }
+
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        updateSizeProbe()
     }
 
     /// Re-primes frame delivery once the PiP window owns the display layer.
@@ -135,7 +144,28 @@ final class PipTileView: UIView {
         avatarView.isHidden = video || avatarView.image == nil
         initialsLabel.isHidden = video || avatarView.image != nil
         micBadge.isHidden = !(participant?.isMicMuted ?? false)
+        updateSizeProbe()
         onAspectChanged?()
+    }
+
+    private func updateVideoSize(_ size: CGSize) {
+        guard videoSize != size else { return }
+        videoSize = size
+        onAspectChanged?()
+    }
+
+    private func updateSizeProbe() {
+        let target = window == nil && showsVideo ? track : nil
+        guard target !== sizeProbe?.track else { return }
+        sizeProbe?.stop()
+        sizeProbe = target.map { track in
+            let probe = PipFrameSizeProbe(track: track)
+            probe.onSize = { [weak self, weak probe] size in
+                guard let self, let probe, self.sizeProbe === probe else { return }
+                self.updateVideoSize(size)
+            }
+            return probe
+        }
     }
 
     private func loadAvatar(_ address: String?) {
