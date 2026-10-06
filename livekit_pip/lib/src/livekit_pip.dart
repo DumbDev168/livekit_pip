@@ -93,6 +93,7 @@ class LiveKitPip {
       videoWidth: 0,
       videoHeight: 0,
       iosMirrorSelfView: config.ios.mirrorSelfView,
+      iosAnimateExit: config.ios.animateExit,
     );
     _stateSubscription = LivekitPipPlatform.instance.stateStream.listen(
       (raw) {

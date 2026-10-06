@@ -195,6 +195,7 @@ struct PipInitRequest: Hashable, CustomStringConvertible {
   var videoWidth: Int64
   var videoHeight: Int64
   var iosMirrorSelfView: Bool
+  var iosAnimateExit: Bool
 
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -207,6 +208,7 @@ struct PipInitRequest: Hashable, CustomStringConvertible {
     let videoWidth = pigeonVar_list[5] as! Int64
     let videoHeight = pigeonVar_list[6] as! Int64
     let iosMirrorSelfView = pigeonVar_list[7] as! Bool
+    let iosAnimateExit = pigeonVar_list[8] as! Bool
 
     return PipInitRequest(
       enabled: enabled,
@@ -216,7 +218,8 @@ struct PipInitRequest: Hashable, CustomStringConvertible {
       iosIncludeLocalParticipantVideo: iosIncludeLocalParticipantVideo,
       videoWidth: videoWidth,
       videoHeight: videoHeight,
-      iosMirrorSelfView: iosMirrorSelfView
+      iosMirrorSelfView: iosMirrorSelfView,
+      iosAnimateExit: iosAnimateExit
     )
   }
   func toList() -> [Any?] {
@@ -229,13 +232,14 @@ struct PipInitRequest: Hashable, CustomStringConvertible {
       videoWidth,
       videoHeight,
       iosMirrorSelfView,
+      iosAnimateExit,
     ]
   }
   static func == (lhs: PipInitRequest, rhs: PipInitRequest) -> Bool {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return MessagesPigeonInternal.deepEquals(lhs.enabled, rhs.enabled) && MessagesPigeonInternal.deepEquals(lhs.disableWhenScreenSharing, rhs.disableWhenScreenSharing) && MessagesPigeonInternal.deepEquals(lhs.androidAutoEnterOnBackground, rhs.androidAutoEnterOnBackground) && MessagesPigeonInternal.deepEquals(lhs.iosAutoEnterOnBackground, rhs.iosAutoEnterOnBackground) && MessagesPigeonInternal.deepEquals(lhs.iosIncludeLocalParticipantVideo, rhs.iosIncludeLocalParticipantVideo) && MessagesPigeonInternal.deepEquals(lhs.videoWidth, rhs.videoWidth) && MessagesPigeonInternal.deepEquals(lhs.videoHeight, rhs.videoHeight) && MessagesPigeonInternal.deepEquals(lhs.iosMirrorSelfView, rhs.iosMirrorSelfView)
+    return MessagesPigeonInternal.deepEquals(lhs.enabled, rhs.enabled) && MessagesPigeonInternal.deepEquals(lhs.disableWhenScreenSharing, rhs.disableWhenScreenSharing) && MessagesPigeonInternal.deepEquals(lhs.androidAutoEnterOnBackground, rhs.androidAutoEnterOnBackground) && MessagesPigeonInternal.deepEquals(lhs.iosAutoEnterOnBackground, rhs.iosAutoEnterOnBackground) && MessagesPigeonInternal.deepEquals(lhs.iosIncludeLocalParticipantVideo, rhs.iosIncludeLocalParticipantVideo) && MessagesPigeonInternal.deepEquals(lhs.videoWidth, rhs.videoWidth) && MessagesPigeonInternal.deepEquals(lhs.videoHeight, rhs.videoHeight) && MessagesPigeonInternal.deepEquals(lhs.iosMirrorSelfView, rhs.iosMirrorSelfView) && MessagesPigeonInternal.deepEquals(lhs.iosAnimateExit, rhs.iosAnimateExit)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -248,10 +252,11 @@ struct PipInitRequest: Hashable, CustomStringConvertible {
     MessagesPigeonInternal.deepHash(value: videoWidth, hasher: &hasher)
     MessagesPigeonInternal.deepHash(value: videoHeight, hasher: &hasher)
     MessagesPigeonInternal.deepHash(value: iosMirrorSelfView, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: iosAnimateExit, hasher: &hasher)
   }
 
   public var description: String {
-    return "PipInitRequest(enabled: \(String(describing: enabled)), disableWhenScreenSharing: \(String(describing: disableWhenScreenSharing)), androidAutoEnterOnBackground: \(String(describing: androidAutoEnterOnBackground)), iosAutoEnterOnBackground: \(String(describing: iosAutoEnterOnBackground)), iosIncludeLocalParticipantVideo: \(String(describing: iosIncludeLocalParticipantVideo)), videoWidth: \(String(describing: videoWidth)), videoHeight: \(String(describing: videoHeight)), iosMirrorSelfView: \(String(describing: iosMirrorSelfView)))"
+    return "PipInitRequest(enabled: \(String(describing: enabled)), disableWhenScreenSharing: \(String(describing: disableWhenScreenSharing)), androidAutoEnterOnBackground: \(String(describing: androidAutoEnterOnBackground)), iosAutoEnterOnBackground: \(String(describing: iosAutoEnterOnBackground)), iosIncludeLocalParticipantVideo: \(String(describing: iosIncludeLocalParticipantVideo)), videoWidth: \(String(describing: videoWidth)), videoHeight: \(String(describing: videoHeight)), iosMirrorSelfView: \(String(describing: iosMirrorSelfView)), iosAnimateExit: \(String(describing: iosAnimateExit)))"
   }
 }
 

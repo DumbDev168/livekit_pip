@@ -67,6 +67,7 @@ void main() {
           videoWidth: any(named: 'videoWidth'),
           videoHeight: any(named: 'videoHeight'),
           iosMirrorSelfView: any(named: 'iosMirrorSelfView'),
+          iosAnimateExit: any(named: 'iosAnimateExit'),
         ),
       ).thenAnswer((_) async {});
       when(

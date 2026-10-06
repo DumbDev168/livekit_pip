@@ -8,6 +8,7 @@ public class LiveKitPipPlugin: NSObject, FlutterPlugin, LiveKitPipHostApi {
     // Kept here because initialize() and the first updateParticipants() can
     // land before Flutter creates the platform view.
     private var mirrorSelfView = true
+    private var animateExit = true
     private var participants: [PipParticipant] = []
 
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -35,6 +36,8 @@ public class LiveKitPipPlugin: NSObject, FlutterPlugin, LiveKitPipHostApi {
         )
         mirrorSelfView = request.iosMirrorSelfView
         platformView?.setMirrorSelfView(mirrorSelfView)
+        animateExit = request.iosAnimateExit
+        platformView?.animateExit = animateExit
     }
 
     func enterPip() {
@@ -73,6 +76,7 @@ public class LiveKitPipPlugin: NSObject, FlutterPlugin, LiveKitPipHostApi {
             self?.stateEventSink?(ordinal)
         }
         view.setMirrorSelfView(mirrorSelfView)
+        view.animateExit = animateExit
         view.updateParticipants(participants)
     }
 }

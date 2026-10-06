@@ -27,6 +27,7 @@ class MethodChannelLivekitPip extends LivekitPipPlatform {
     required int videoWidth,
     required int videoHeight,
     bool iosMirrorSelfView = true,
+    bool iosAnimateExit = true,
   }) => throw UnimplementedError(
     'initialize() not implemented on this platform.',
   );

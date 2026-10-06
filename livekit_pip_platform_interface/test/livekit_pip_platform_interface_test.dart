@@ -3,6 +3,7 @@ import 'package:livekit_pip_platform_interface/livekit_pip_platform_interface.da
 
 class _MockLivekitPipPlatform extends LivekitPipPlatform {
   bool? lastMirrorSelfView;
+  bool? lastAnimateExit;
 
   @override
   Future<bool> isSupported() async => true;
@@ -17,8 +18,10 @@ class _MockLivekitPipPlatform extends LivekitPipPlatform {
     required int videoWidth,
     required int videoHeight,
     bool iosMirrorSelfView = true,
+    bool iosAnimateExit = true,
   }) async {
     lastMirrorSelfView = iosMirrorSelfView;
+    lastAnimateExit = iosAnimateExit;
   }
 
   @override
@@ -60,7 +63,7 @@ void main() {
 
     group('initialize', () {
       test(
-        'mirroring defaults to on',
+        'mirroring and the exit animation default to on',
         () async {
           final platform = livekitPipPlatform as _MockLivekitPipPlatform;
           await platform.initialize(
@@ -73,6 +76,7 @@ void main() {
             videoHeight: 0,
           );
           expect(platform.lastMirrorSelfView, isTrue);
+          expect(platform.lastAnimateExit, isTrue);
         },
       );
     });

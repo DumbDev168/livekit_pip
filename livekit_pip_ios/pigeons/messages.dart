@@ -21,6 +21,7 @@ class PipInitRequest {
     this.videoWidth = 0,
     this.videoHeight = 0,
     this.iosMirrorSelfView = true,
+    this.iosAnimateExit = true,
   });
 
   bool enabled;
@@ -32,6 +33,7 @@ class PipInitRequest {
   int videoHeight;
 
   bool iosMirrorSelfView;
+  bool iosAnimateExit;
 }
 
 /// One tile of the PiP window.

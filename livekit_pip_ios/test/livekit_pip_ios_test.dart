@@ -33,21 +33,26 @@ void main() {
       );
     });
 
-    test('initialize sends the mirroring setting', () async {
-      final sent = _capture('initialize');
-      await LivekitPipIOS().initialize(
-        enabled: true,
-        disableWhenScreenSharing: true,
-        androidAutoEnterOnBackground: true,
-        iosAutoEnterOnBackground: true,
-        iosIncludeLocalParticipantVideo: true,
-        videoWidth: 0,
-        videoHeight: 0,
-        iosMirrorSelfView: false,
-      );
-      final request = sent()! as PipInitRequest;
-      expect(request.iosMirrorSelfView, isFalse);
-    });
+    test(
+      'initialize sends the mirroring and exit animation settings',
+      () async {
+        final sent = _capture('initialize');
+        await LivekitPipIOS().initialize(
+          enabled: true,
+          disableWhenScreenSharing: true,
+          androidAutoEnterOnBackground: true,
+          iosAutoEnterOnBackground: true,
+          iosIncludeLocalParticipantVideo: true,
+          videoWidth: 0,
+          videoHeight: 0,
+          iosMirrorSelfView: false,
+          iosAnimateExit: false,
+        );
+        final request = sent()! as PipInitRequest;
+        expect(request.iosMirrorSelfView, isFalse);
+        expect(request.iosAnimateExit, isFalse);
+      },
+    );
 
     test('updateParticipants sends every tile field', () async {
       final sent = _capture('updateParticipants');

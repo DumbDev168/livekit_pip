@@ -202,7 +202,8 @@ data class PipInitRequest (
   val iosIncludeLocalParticipantVideo: Boolean,
   val videoWidth: Long,
   val videoHeight: Long,
-  val iosMirrorSelfView: Boolean
+  val iosMirrorSelfView: Boolean,
+  val iosAnimateExit: Boolean
 )
  {
   companion object {
@@ -215,7 +216,8 @@ data class PipInitRequest (
       val videoWidth = pigeonVar_list[5] as Long
       val videoHeight = pigeonVar_list[6] as Long
       val iosMirrorSelfView = pigeonVar_list[7] as Boolean
-      return PipInitRequest(enabled, disableWhenScreenSharing, androidAutoEnterOnBackground, iosAutoEnterOnBackground, iosIncludeLocalParticipantVideo, videoWidth, videoHeight, iosMirrorSelfView)
+      val iosAnimateExit = pigeonVar_list[8] as Boolean
+      return PipInitRequest(enabled, disableWhenScreenSharing, androidAutoEnterOnBackground, iosAutoEnterOnBackground, iosIncludeLocalParticipantVideo, videoWidth, videoHeight, iosMirrorSelfView, iosAnimateExit)
     }
   }
   fun toList(): List<Any?> {
@@ -228,6 +230,7 @@ data class PipInitRequest (
       videoWidth,
       videoHeight,
       iosMirrorSelfView,
+      iosAnimateExit,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -238,7 +241,7 @@ data class PipInitRequest (
       return true
     }
     val other = other as PipInitRequest
-    return MessagesPigeonUtils.deepEquals(this.enabled, other.enabled) && MessagesPigeonUtils.deepEquals(this.disableWhenScreenSharing, other.disableWhenScreenSharing) && MessagesPigeonUtils.deepEquals(this.androidAutoEnterOnBackground, other.androidAutoEnterOnBackground) && MessagesPigeonUtils.deepEquals(this.iosAutoEnterOnBackground, other.iosAutoEnterOnBackground) && MessagesPigeonUtils.deepEquals(this.iosIncludeLocalParticipantVideo, other.iosIncludeLocalParticipantVideo) && MessagesPigeonUtils.deepEquals(this.videoWidth, other.videoWidth) && MessagesPigeonUtils.deepEquals(this.videoHeight, other.videoHeight) && MessagesPigeonUtils.deepEquals(this.iosMirrorSelfView, other.iosMirrorSelfView)
+    return MessagesPigeonUtils.deepEquals(this.enabled, other.enabled) && MessagesPigeonUtils.deepEquals(this.disableWhenScreenSharing, other.disableWhenScreenSharing) && MessagesPigeonUtils.deepEquals(this.androidAutoEnterOnBackground, other.androidAutoEnterOnBackground) && MessagesPigeonUtils.deepEquals(this.iosAutoEnterOnBackground, other.iosAutoEnterOnBackground) && MessagesPigeonUtils.deepEquals(this.iosIncludeLocalParticipantVideo, other.iosIncludeLocalParticipantVideo) && MessagesPigeonUtils.deepEquals(this.videoWidth, other.videoWidth) && MessagesPigeonUtils.deepEquals(this.videoHeight, other.videoHeight) && MessagesPigeonUtils.deepEquals(this.iosMirrorSelfView, other.iosMirrorSelfView) && MessagesPigeonUtils.deepEquals(this.iosAnimateExit, other.iosAnimateExit)
   }
 
   override fun hashCode(): Int {
@@ -251,10 +254,11 @@ data class PipInitRequest (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.videoWidth)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.videoHeight)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.iosMirrorSelfView)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.iosAnimateExit)
     return result
   }
   override fun toString(): String {
-    return "PipInitRequest(enabled=$enabled, disableWhenScreenSharing=$disableWhenScreenSharing, androidAutoEnterOnBackground=$androidAutoEnterOnBackground, iosAutoEnterOnBackground=$iosAutoEnterOnBackground, iosIncludeLocalParticipantVideo=$iosIncludeLocalParticipantVideo, videoWidth=$videoWidth, videoHeight=$videoHeight, iosMirrorSelfView=$iosMirrorSelfView)"
+    return "PipInitRequest(enabled=$enabled, disableWhenScreenSharing=$disableWhenScreenSharing, androidAutoEnterOnBackground=$androidAutoEnterOnBackground, iosAutoEnterOnBackground=$iosAutoEnterOnBackground, iosIncludeLocalParticipantVideo=$iosIncludeLocalParticipantVideo, videoWidth=$videoWidth, videoHeight=$videoHeight, iosMirrorSelfView=$iosMirrorSelfView, iosAnimateExit=$iosAnimateExit)"
   }
 }
 private open class MessagesPigeonCodec : StandardMessageCodec() {

@@ -41,6 +41,7 @@ class IosPipConfiguration {
   final bool includeLocalParticipantVideo;     // default true: local tile + multitasking camera
   final bool autoEnterOnBackground;            // default true
   final bool mirrorSelfView;                   // default true
+  final bool animateExit;                      // default true; false hides tiles while PiP closes
   final String? Function(Participant)? avatarUrlResolver; // shown while camera is off
 }
 

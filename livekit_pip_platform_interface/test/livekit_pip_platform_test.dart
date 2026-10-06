@@ -15,6 +15,7 @@ class _FakePlatform extends LivekitPipPlatform with MockPlatformInterfaceMixin {
     required int videoWidth,
     required int videoHeight,
     bool iosMirrorSelfView = true,
+    bool iosAnimateExit = true,
   }) async {}
   @override
   Future<void> enterPip() async {}
