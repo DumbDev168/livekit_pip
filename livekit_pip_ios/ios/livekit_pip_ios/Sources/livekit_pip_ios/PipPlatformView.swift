@@ -202,6 +202,13 @@ class PipPlatformView: NSObject, FlutterPlatformView {
     func stopPictureInPicture() {
         pipController?.stopPictureInPicture()
     }
+
+    fileprivate func setPipContentHidden(_ isHidden: Bool) {
+        UIView.performWithoutAnimation {
+            pipVC.view.alpha = isHidden ? 0 : 1
+            pipVC.view.backgroundColor = isHidden ? .clear : .black
+        }
+    }
 }
 
 // MARK: - AVPictureInPictureControllerDelegate
@@ -211,6 +218,7 @@ extension PipPlatformView: AVPictureInPictureControllerDelegate {
     func pictureInPictureControllerWillStartPictureInPicture(
         _ controller: AVPictureInPictureController
     ) {
+        setPipContentHidden(false)
         onStateChanged?(2) // entering
     }
 
@@ -226,6 +234,10 @@ extension PipPlatformView: AVPictureInPictureControllerDelegate {
     func pictureInPictureControllerWillStopPictureInPicture(
         _ controller: AVPictureInPictureController
     ) {
+        // AVKit grows the window back over the source view as it closes,
+        // stretching the tiles across the call screen. Hide them so the
+        // call UI simply shows through.
+        setPipContentHidden(true)
         onStateChanged?(4) // exiting
     }
 
@@ -233,6 +245,7 @@ extension PipPlatformView: AVPictureInPictureControllerDelegate {
         _ controller: AVPictureInPictureController
     ) {
         trackStateAdapter.isEnabled = false
+        setPipContentHidden(false)
         onStateChanged?(1) // inactive
     }
 
